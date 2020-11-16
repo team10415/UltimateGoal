@@ -12,6 +12,7 @@
 // Custom definitions may go here
 
 // Include common definitions from above.
+
 apply from: '../build.common.gradle'
 
 repositories {
@@ -24,5 +25,4 @@ apply plugin: 'kotlin-android-extensions'
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
-    //implementation project(path: ':AutonoPro')
 }
