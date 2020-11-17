@@ -23,6 +23,9 @@ class Odometry(
     private var values: OdometerValues
 
     init {
+        val parameters = BNO055IMU.Parameters()
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS
+        imu.initialize(parameters)
         values = OdometerValues(
             left.currentPosition.toDouble() * consts.TICKS_PER_INCH,
             right.currentPosition.toDouble() * consts.TICKS_PER_INCH,

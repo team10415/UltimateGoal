@@ -5,10 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.autonopro.localization.Odometry
 import org.firstinspires.ftc.teamcode.autonopro.localization.OdometryConsts
-import org.firstinspires.ftc.teamcode.util.DumbDrive
-import org.firstinspires.ftc.teamcode.util.Gamepad
-import org.firstinspires.ftc.teamcode.util.MovementType
-import org.firstinspires.ftc.teamcode.util.Speed
+import org.firstinspires.ftc.teamcode.util.*
 
 @TeleOp
 class Teleop : OpMode() {
@@ -45,11 +42,13 @@ class Teleop : OpMode() {
 
     override fun loop() {
         if (gamepads == null) assignClickListeners()
+        gamepads!!.forEach { it.activateClicks() }
 
         drivetrain.apply {
-            speed = Speed(0.0, gamepads!![0].sticks.left.y / 2, gamepads!![0].sticks.right.x)
+            speed = Speed(gamepads!![0].sticks.left.x, gamepads!![0].sticks.left.y, gamepads!![0].sticks.right.x)
             zoom(MovementType.MECANUM)
             telemetry.addLine(powers.toString())
+
         }
 
         odometry.apply {
@@ -57,30 +56,28 @@ class Teleop : OpMode() {
             telemetry.addLine(currentPose.toString())
         }
 
-        Thread.sleep(250)
     }
 
     fun assignClickListeners() {
         gamepads = listOf(Gamepad(gamepad1), Gamepad(gamepad2))
 
-        /* ASSIGN BUTTON CLICK LISTENERS
         gamepads!![1].onClick(BenignButtons.A) {
             states.intake1 = !states.intake1
             drivetrain.intakes.first.forEach {
-                it.power = if (states.intake1) (drivetrain[Drivetrain.Constants.INTAKE1_ON] as Double) else 0.0
+                it.power = if (states.intake1) (drivetrain[DumbDrive.Constants.INTAKE1_ON] as Double) else 0.0
             }
         }
         gamepads!![1].onClick(BenignButtons.X) {
             states.intake2 = !states.intake2
             drivetrain.intakes.second.also { // use .also for consistent code style
-                it.power = if (states.intake2) (drivetrain[Drivetrain.Constants.INTAKE2_ON] as Double) else 0.0
+                it.power = if (states.intake2) (drivetrain[DumbDrive.Constants.INTAKE2_ON] as Double) else 0.0
             }
         }
         gamepads!![1].onClick(BenignButtons.Y) {
             states.outtake = !states.outtake
             drivetrain.outtake.also { // use .also for consistent code style
-                it.power = if (states.intake2) (drivetrain[Drivetrain.Constants.OUTTAKE_ON] as Double) else 0.0
+                it.power = if (states.intake2) (drivetrain[DumbDrive.Constants.OUTTAKE_ON] as Double) else 0.0
             }
-        }*/
+        }
     }
 }

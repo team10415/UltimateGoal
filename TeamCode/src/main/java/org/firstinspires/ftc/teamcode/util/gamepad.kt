@@ -19,7 +19,7 @@ class Gamepad(gamepad: OldGamepad) {
                 get() = gamepad.right_stick_y.toDouble()
         }
     }
-    
+
     val triggers = Pair(gamepad.left_trigger.toDouble(), gamepad.right_trigger.toDouble())
 
     val buttons = object : GamepadButtons {
@@ -76,6 +76,13 @@ class Gamepad(gamepad: OldGamepad) {
             BenignButtons.X -> listeners.x
             BenignButtons.Y -> listeners.y
         } += listener
+    }
+
+    fun activateClicks() {
+        if (flips.a) listeners.a.forEach { it() }
+        if (flips.b) listeners.b.forEach { it() }
+        if (flips.x) listeners.x.forEach { it() }
+        if (flips.y) listeners.y.forEach { it() }
     }
 }
 

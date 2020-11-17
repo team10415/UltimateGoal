@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.util
 
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorSimple
-import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.*
 import org.firstinspires.ftc.teamcode.autonopro.robot.Drivetrain
 import org.firstinspires.ftc.teamcode.autonopro.util.Vector
 import org.firstinspires.ftc.teamcode.util.math.round
@@ -15,13 +13,12 @@ class DumbDrive(hardwareMap: HardwareMap) : Drivetrain {
     val bl: DcMotor = hardwareMap.dcMotor.get("bl")
     val br: DcMotor = hardwareMap.dcMotor.get("br")
 
-    /*
-    intakes = Pair(
-        listOf(hardwareMap.dcMotor.get("intake1"), hardwareMap.dcMotor.get("intake2")),
-        hardwareMap.dcMotor.get("intake3")
-    )
-    outtake = hardwareMap.dcMotor.get("outtake")
-    */
+    val intakes: Pair<List<DcMotor>, DcMotor>
+    val outtake: DcMotor
+
+    val grab: Servo
+    val twist: Servo
+    val pushers: Pair<Servo, CRServo>
 
     init {
 
@@ -37,17 +34,23 @@ class DumbDrive(hardwareMap: HardwareMap) : Drivetrain {
 
         fr.direction = DcMotorSimple.Direction.REVERSE
         br.direction = DcMotorSimple.Direction.REVERSE
-    }
 
-    /*val intakes: Pair<List<DcMotor>, DcMotor>
-    val outtake: DcMotor*/
+        intakes = Pair(
+            listOf(hardwareMap.dcMotor.get("i1"), hardwareMap.dcMotor.get("i2")), hardwareMap.dcMotor.get("i3")
+        )
+        outtake = hardwareMap.dcMotor.get("shoot")
+
+        grab = hardwareMap.servo.get("Gran")
+        twist = hardwareMap.servo.get("twist")
+        pushers = Pair(hardwareMap.servo.get("p1"), hardwareMap.get(CRServo::class.java, "p2"))
+    }
 
     enum class Constants {
         INTAKE1_ON, INTAKE2_ON, OUTTAKE_ON
     }
 
     operator fun get(id: Constants): Any? = when (id) {
-        Constants.INTAKE1_ON -> 1.0
+        Constants.INTAKE1_ON -> -1.0
         Constants.INTAKE2_ON -> 1.0
         Constants.OUTTAKE_ON -> 1.0
     }
