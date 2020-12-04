@@ -20,7 +20,13 @@ class Gamepad(gamepad: OldGamepad) {
         }
     }
 
-    val triggers = Pair(gamepad.left_trigger.toDouble(), gamepad.right_trigger.toDouble())
+    val triggers = object : GamepadTriggers {
+        override val left: Double
+            get() = gamepad.left_trigger.toDouble()
+
+        override val right: Double
+            get() = gamepad.right_trigger.toDouble()
+    }
 
     val buttons = object : GamepadButtons {
         override var a: Boolean
@@ -35,6 +41,12 @@ class Gamepad(gamepad: OldGamepad) {
         override var y: Boolean
             get() = gamepad.y
             set(_) {}
+        override var dpad_up: Boolean
+            get() = gamepad.dpad_up
+            set(_) {}
+        override var dpad_down: Boolean
+            get() = gamepad.dpad_down
+            set(_) {}
     }
 
     private val flipCtrls = object : GamepadButtons {
@@ -42,23 +54,33 @@ class Gamepad(gamepad: OldGamepad) {
         override var b = false
         override var x = false
         override var y = false
+        override var dpad_up = false
+        override var dpad_down = false
     }
     val flips = object : GamepadButtons {
         override var a = false
-            get() = gamepad.a != flipCtrls.a.also {
+            get() = (gamepad.a && gamepad.a != flipCtrls.a).also {
                 flipCtrls.a = gamepad.a
             }
         override var b = false
-            get() = gamepad.b != flipCtrls.b.also {
+            get() = (gamepad.b && gamepad.b != flipCtrls.b).also {
                 flipCtrls.b = gamepad.b
             }
         override var x = false
-            get() = gamepad.x != flipCtrls.x.also {
+            get() = (gamepad.x && gamepad.x != flipCtrls.x).also {
                 flipCtrls.x = gamepad.x
             }
         override var y = false
-            get() = gamepad.y != flipCtrls.y.also {
+            get() = (gamepad.y && gamepad.y != flipCtrls.y).also {
                 flipCtrls.y = gamepad.y
+            }
+        override var dpad_up = false
+            get() = (gamepad.dpad_up && gamepad.dpad_up != flipCtrls.dpad_up).also {
+                flipCtrls.dpad_up = gamepad.dpad_up
+            }
+        override var dpad_down = false
+            get() = (gamepad.dpad_down && gamepad.dpad_down != flipCtrls.dpad_down).also {
+                flipCtrls.dpad_down = gamepad.dpad_down
             }
     }
 
@@ -67,6 +89,8 @@ class Gamepad(gamepad: OldGamepad) {
         override val b = mutableListOf<() -> Unit>()
         override val x = mutableListOf<() -> Unit>()
         override val y = mutableListOf<() -> Unit>()
+        override val dpad_up = mutableListOf<() -> Unit>()
+        override val dpad_down = mutableListOf<() -> Unit>()
     }
 
     fun onClick(button: BenignButtons, listener: () -> Unit) {
@@ -75,6 +99,8 @@ class Gamepad(gamepad: OldGamepad) {
             BenignButtons.B -> listeners.b
             BenignButtons.X -> listeners.x
             BenignButtons.Y -> listeners.y
+            BenignButtons.DPAD_UP -> listeners.dpad_up
+            BenignButtons.DPAD_DOWN -> listeners.dpad_down
         } += listener
     }
 
@@ -83,12 +109,19 @@ class Gamepad(gamepad: OldGamepad) {
         if (flips.b) listeners.b.forEach { it() }
         if (flips.x) listeners.x.forEach { it() }
         if (flips.y) listeners.y.forEach { it() }
+        if (flips.dpad_up) listeners.dpad_up.forEach { it() }
+        if (flips.dpad_down) listeners.dpad_down.forEach { it() }
     }
 }
 
 interface GamepadSticks {
     val left: GamepadStick
     val right: GamepadStick
+}
+
+interface GamepadTriggers {
+    val left: Double
+    val right: Double
 }
 
 interface GamepadStick {
@@ -101,6 +134,8 @@ interface GamepadButtons {
     var b: Boolean
     var x: Boolean
     var y: Boolean
+    var dpad_down: Boolean
+    var dpad_up: Boolean
 }
 
 interface GamepadButtonListeners {
@@ -108,4 +143,6 @@ interface GamepadButtonListeners {
     val b: MutableList<() -> Unit>
     val x: MutableList<() -> Unit>
     val y: MutableList<() -> Unit>
+    val dpad_down: MutableList<() -> Unit>
+    val dpad_up: MutableList<() -> Unit>
 }

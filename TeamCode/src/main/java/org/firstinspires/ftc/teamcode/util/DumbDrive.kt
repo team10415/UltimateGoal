@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.util
 
-import com.qualcomm.robotcore.hardware.*
+import com.qualcomm.robotcore.hardware.CRServo
+import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.autonopro.robot.Drivetrain
 import org.firstinspires.ftc.teamcode.autonopro.util.Vector
 import org.firstinspires.ftc.teamcode.util.math.round
@@ -32,8 +35,8 @@ class DumbDrive(hardwareMap: HardwareMap) : Drivetrain {
         bl.mode = DcMotor.RunMode.RUN_USING_ENCODER
         br.mode = DcMotor.RunMode.RUN_USING_ENCODER
 
-        fr.direction = DcMotorSimple.Direction.REVERSE
-        br.direction = DcMotorSimple.Direction.REVERSE
+        /*fr.direction = DcMotorSimple.Direction.REVERSE
+        br.direction = DcMotorSimple.Direction.REVERSE*/
 
         intakes = Pair(
             listOf(hardwareMap.dcMotor.get("i1"), hardwareMap.dcMotor.get("i2")), hardwareMap.dcMotor.get("i3")
@@ -100,9 +103,9 @@ class DumbDrive(hardwareMap: HardwareMap) : Drivetrain {
         powers = adjustedVals
 
         fl.power = powers[0]
-        fr.power = powers[1]
+        fr.power = -powers[1]
         bl.power = powers[2]
-        br.power = powers[3]
+        br.power = -powers[3]
     }
 
     override fun drive(direction: Vector, rotationSpeed: Double) {
